@@ -39,7 +39,8 @@ pipeline {
                   sshCommand remote: remote, sudo: false, command: 'whoami'
               }
                 stage("Scan with InSpec") {
-                  sshCommand remote: remote, sudo: false, command: 'inspec exec ~/tmp/linux-baseline/'
+                  // sshCommand remote: remote, sudo: false, command: 'inspec exec ~/tmp/linux-baseline/'
+                  sshCommand remote: remote, sudo: true, command: 'inspec exec /home/marley/tmp/linux-baseline'
               }
             }
           }
