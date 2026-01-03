@@ -35,7 +35,7 @@ pipeline {
                   sshCommand remote: remote, sudo: true, command: 'echo "some more stuff goes here....."'
               }
                 stage("Scan with InSpec") {
-                  sshCommand remote: remote, sudo: true, command: 'cat /etc/hosts'
+                  sshCommand remote: remote, sudo: true, command: 'whoami'
               }
             }
           }
