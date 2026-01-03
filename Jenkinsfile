@@ -6,10 +6,10 @@ pipeline {
       steps{
         echo 'Running a compliance scan with inspec....'
           script{
-            def remote = [:]
-            remote.name = "controlnode"
-            remote.host = "192.168.1.12"
-            remote.allowAnyHosts = true
+            // def remote = [:]
+            // remote.name = "controlnode"
+            // remote.host = "192.168.1.12"
+            // remote.allowAnyHosts = true
 
             withCredentials([sshUserPrivateKey(credentialsId: 'sshUser', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
 
