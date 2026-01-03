@@ -35,7 +35,7 @@ pipeline {
                   sshCommand remote: remote, sudo: true, command: 'echo "some more stuff goes here....."'
               }
                 stage("Scan with InSpec") {
-                  sshCommand remote: remote, sudo: true, command: 'whoami'
+                  sshCommand remote: remote, sudo: false, command: 'inspec exec --no-distinct-exit ~/tmp/linux-baseline/'
               }
             }
           }
