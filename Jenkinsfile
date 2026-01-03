@@ -1,32 +1,27 @@
 pipeline {
-  agent any 
-
-  stages {
-    stage('Daily Compliance Run') {
-      steps {
-        script {
-          withCredentials([sshUserPrivateKey(credentialsId: 'sshUser', 
-                                           keyFileVariable: 'identity', 
-                                           usernameVariable: 'userName')]) {
-            
-            // РЕШЕНИЕ: Создаем объект remote сразу целиком как Map
-            def remote = [
-              name: "controlnode",
-              host: "192.168.1.12",
-              user: userName,
-              identityFile: identity,
-              allowAnyHosts: true
-            ]
-
-            echo "--- Configuration Phase ---"
-            sshCommand remote: remote, sudo: true, command: 'uptime'
-
-            echo "--- InSpec Scan ---"
-            // failOnError: false позволит продолжить, если InSpec найдет уязвимости
-            sshCommand remote: remote, sudo: true, command: 'inspec exec /root/linux-baseline/', failOnError: false
-          }
+    agent any
+    stages {
+        stage('Compliance Scan') {
+            steps {
+                script {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'sshUser', 
+                                                     keyFileVariable: 'identity', 
+                                                     usernameVariable: 'userName')]) {
+                        
+                        // Прямая передача параметров в блок с использованием pty: true
+                        // pty: true критичен для последних версий Linux при использовании sudo
+                        withSSH(remote: [host: '192.168.1.12', 
+                                       user: userName, 
+                                       identityFile: identity, 
+                                       allowAnyHosts: true,
+                                       pty: true]) {
+                            
+                            echo "--- Running Scan ---"
+                            sshCommand sudo: true, command: 'inspec exec /root/linux-baseline/'
+                        }
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }
