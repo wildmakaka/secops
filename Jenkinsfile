@@ -15,12 +15,17 @@ pipeline {
                 remote.user = userName
                 remote.identityFile = identity
                 stage("Placeholder Stage...") {
-                  sshCommand remote: remote, sudo: true, command: 'echo "add your stuff here....."'
-                  sshCommand remote: remote, sudo: true, command: 'echo "some more stuff goes here....."'
+                  # sshCommand remote: remote, sudo: true, command: 'echo "add your stuff here....."'
+                  # sshCommand remote: remote, sudo: true, command: 'echo "some more stuff goes here....."'
+
+                  remote(remote) { channel ->
+                      // Use 'channel' to access methods/properties
+                      channel.sshCommand(command: "ls -l") 
+                  }
               }
-                stage("Scan with InSpec") {
-                  sshCommand remote: remote, sudo: true, command: 'inspec exec /root/linux-baseline/'
-              }
+              //   stage("Scan with InSpec") {
+              //     sshCommand remote: remote, sudo: true, command: 'inspec exec /root/linux-baseline/'
+              // }
             }
           }
        }
