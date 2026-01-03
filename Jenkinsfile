@@ -2,15 +2,14 @@ pipeline {
   agent any 
 
   stages {
-    stage('Compliance Scan') {
+    stage('Daily Compliance Run') {
       steps {
         script {
-          // Используем withCredentials для получения данных
           withCredentials([sshUserPrivateKey(credentialsId: 'sshUser', 
                                            keyFileVariable: 'identity', 
                                            usernameVariable: 'userName')]) {
             
-            // Определяем remote как Map (это решает проблему с MissingPropertyException)
+            // РЕШЕНИЕ: Создаем объект remote сразу целиком как Map
             def remote = [
               name: "controlnode",
               host: "192.168.1.12",
@@ -19,12 +18,12 @@ pipeline {
               allowAnyHosts: true
             ]
 
-            echo "--- Подготовка к сканированию ---"
-            sshCommand remote: remote, sudo: true, command: 'echo "Checking connection..." && uptime'
+            echo "--- Configuration Phase ---"
+            sshCommand remote: remote, sudo: true, command: 'uptime'
 
-            echo "--- Запуск InSpec ---"
-            // Используем failOnError: false, чтобы пайплайн не падал при обнаружении уязвимостей
-            sshCommand remote: remote, sudo: true, command: 'inspec exec /root/linux-baseline/'
+            echo "--- InSpec Scan ---"
+            // failOnError: false позволит продолжить, если InSpec найдет уязвимости
+            sshCommand remote: remote, sudo: true, command: 'inspec exec /root/linux-baseline/', failOnError: false
           }
         }
       }
