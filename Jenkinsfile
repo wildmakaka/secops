@@ -34,6 +34,10 @@ pipeline {
                   sshCommand remote: remote, sudo: true, command: 'echo "add your stuff here....."'
                   sshCommand remote: remote, sudo: true, command: 'echo "some more stuff goes here....."'
               }
+
+              stage("whoami") {
+                  sshCommand remote: remote, sudo: false, command: 'whoami'
+              }
                 stage("Scan with InSpec") {
                   sshCommand remote: remote, sudo: false, command: 'inspec exec ~/tmp/linux-baseline/'
               }
